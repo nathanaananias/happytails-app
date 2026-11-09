@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Onde a tecnologia encontra o cuidado animal</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Leaflet CSS (Mapas Gratuitos) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Chart.js (Gráficos) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- 1. LANDING PAGE / APRESENTAÇÃO -->
+    <div id="landing-page" class="view-screen active">
+        <div class="mobile-card">
+            <div class="logo-box">
+                <img src="assets/logo.png" alt="Happy Tails Logo" class="app-logo">
+                <p class="tagline">Onde a tecnologia encontra o cuidado animal</p>
+            </div>
+            
+            <div class="welcome-section">
+                <h2>Bem-vindo(a) à sua nova forma de cuidar</h2>
+                <p class="subtitle">Marcações, acompanhamento e bem-estar do seu companheiro, tudo num só lugar.</p>
+                
+                <div class="pills-container">
+                    <div class="pill"><span>01</span><br>Tecnologia</div>
+                    <div class="pill"><span>02</span><br>Confiança</div>
+                    <div class="pill"><span>03</span><br>Bem-estar</div>
+                </div>
+
+                <button class="btn-primary" onclick="showScreen('app-dashboard')">Entrar na Aplicação</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. DASHBOARD DA APP (PAINEL DO TUTOR) -->
+    <div id="app-dashboard" class="view-screen">
+        <header class="app-header">
+            <img src="assets/logo.png" alt="Happy Tails Logo" class="header-logo" onclick="showScreen('landing-page')">
+            <button class="btn-logout" onclick="showScreen('landing-page')">Sair</button>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="openTab('perfil')">Perfil</button>
+            <button class="tab-btn" onclick="openTab('fotos')">Fotos</button>
+            <button class="tab-btn" onclick="openTab('notificacoes')">Avisos</button>
+            <button class="tab-btn" onclick="openTab('saude')">Saúde</button>
+            <button class="tab-btn" onclick="openTab('agenda')">Agenda</button>
+            <button class="tab-btn" onclick="openTab('pettaxi')">Pet Táxi</button>
+            <button class="tab-btn" onclick="openTab('financeiro')">Financeiro</button>
+        </nav>
+
+        <main class="content-area">
+            <!-- TAB: PERFIL -->
+            <section id="tab-perfil" class="tab-content active">
+                <h3>Dados do Tutor e do Cão</h3>
+                <form class="form-grid" onsubmit="event.preventDefault();">
+                    <div class="form-group">
+                        <label>Nome do Tutor</label>
+                        <input type="text" value="Nathana Cantero">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Cão</label>
+                        <input type="text" value="Max">
+                    </div>
+                    <div class="form-group">
+                        <label>Raça</label>
+                        <input type="text" value="Golden Retriever">
+                    </div>
+                    <div class="form-group">
+                        <label>Idade (anos)</label>
+                        <input type="number" value="3">
+                    </div>
+                    <div class="form-group">
+                        <label>Peso (kg)</label>
+                        <input type="number" value="28.5">
+                    </div>
+                    <button type="submit" class="btn-primary">Salvar Alterações</button>
+                </form>
+            </section>
+
+            <!-- TAB: FOTOS -->
+            <section id="tab-fotos" class="tab-content">
+                <h3>Galeria do Pet</h3>
+                <div class="photo-grid">
+                    <div class="photo-card"><img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=400" alt="Cão"></div>
+                    <div class="photo-card"><img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400" alt="Cão"></div>
+                    <div class="photo-card"><img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400" alt="Cão"></div>
+                </div>
+            </section>
+
+            <!-- TAB: NOTIFICAÇÕES -->
+            <section id="tab-notificacoes" class="tab-content">
+                <h3>Notificações & Alertas</h3>
+                <ul class="notification-list">
+                    <li class="notification-item warning">⚠️ Vacina da Raiva a vencer em 15 dias!</li>
+                    <li class="notification-item info">🚗 Pet Táxi agendado para amanhã às 08:30.</li>
+                    <li class="notification-item success">✅ Agendamento de Day Care confirmado.</li>
+                </ul>
+            </section>
+
+            <!-- TAB: SAÚDE -->
+            <section id="tab-saude" class="tab-content">
+                <h3>Acompanhamento de Saúde</h3>
+                <div class="health-container">
+                    <div class="health-card">
+                        <h4>Agendamento Veterinário</h4>
+                        <p><strong>Próxima consulta:</strong> 25/11/2026 - 14:30</p>
+                        <p><strong>Clínica:</strong> VetCare Coimbra</p>
+                    </div>
+                    <div class="health-card">
+                        <h4>Registo de Vacinas</h4>
+                        <ul>
+                            <li>V8/V10: Válida até 10/2027</li>
+                            <li>Raiva: Válida até 11/2026</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <h4>Consumo Diário de Alimentação (g)</h4>
+                    <canvas id="feedingChart"></canvas>
+                </div>
+            </section>
+
+            <!-- TAB: AGENDA -->
+            <section id="tab-agenda" class="tab-content">
+                <h3>Agendar Serviço</h3>
+                <form class="form-grid" onsubmit="handleBooking(event)">
+                    <div class="form-group">
+                        <label>Tipo de Serviço</label>
+                        <select id="booking-service" onchange="toggleMapInBooking()">
+                            <option value="veterinario">Consulta Veterinária</option>
+                            <option value="daycare">Day Care / Creche</option>
+                            <option value="pettaxi">Pet Táxi</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Horário</label>
+                        <input type="time" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Confirmar Agendamento</button>
+                </form>
+            </section>
+
+            <!-- TAB: PET TÁXI -->
+            <section id="tab-pettaxi" class="tab-content">
+                <h3>Mapa de Rota - Pet Táxi</h3>
+                <p>Status atual: <strong>Motorista a caminho da recolha</strong></p>
+                <div id="map"></div>
+            </section>
+
+            <!-- TAB: FINANCEIRO -->
+            <section id="tab-financeiro" class="tab-content">
+                <h3>Histórico Financeiro</h3>
+                <table class="financial-table">
+                    <thead>
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Day Care (Passe Integrado)</td>
+                            <td>01/11/2026</td>
+                            <td>120,00 €</td>
+                            <td><span class="badge status-paid">Pago</span></td>
+                        </tr>
+                        <tr>
+                            <td>Pet Táxi (Ida e Volta)</td>
+                            <td>05/11/2026</td>
+                            <td>15,00 €</td>
+                            <td><span class="badge status-paid">Pago</span></td>
+                        </tr>
+                        <tr>
+                            <td>Consulta Veterinária</td>
+                            <td>25/11/2026</td>
+                            <td>45,00 €</td>
+                            <td><span class="badge status-pending">Pendente</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Leaflet JS (Mapas) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
