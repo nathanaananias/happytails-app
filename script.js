@@ -24,6 +24,27 @@ function openTab(tabId) {
     }
 }
 
+// SALVAR PERFIL DO TUTOR E DO CÃO
+function saveProfile(e) {
+    e.preventDefault();
+    const tutorName = document.getElementById('tutor-name').value || 'Tutor';
+    alert(`Dados salvos com sucesso para ${tutorName}!`);
+}
+
+// MODAL DE VISUALIZAÇÃO DE FOTOS
+function openImageModal(element) {
+    const imgSrc = element.querySelector('img').src;
+    const modal = document.getElementById('image-modal');
+    const modalImg = document.getElementById('modal-img');
+    
+    modal.style.display = "flex";
+    modalImg.src = imgSrc;
+}
+
+function closeImageModal() {
+    document.getElementById('image-modal').style.display = "none";
+}
+
 // ALERTA AO CONFIRMAR AGENDAMENTO
 function handleBooking(e) {
     e.preventDefault();
@@ -31,7 +52,7 @@ function handleBooking(e) {
     openTab('notificacoes');
 }
 
-// GRÁFICO DE ALIMENTAÇÃO (CHART.JS)
+// GRÁFICO DE ALIMENTAÇÃO CENTRALIZADO
 document.addEventListener("DOMContentLoaded", function() {
     const ctx = document.getElementById('feedingChart').getContext('2d');
     new Chart(ctx, {
@@ -47,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: true,
             scales: {
                 y: { beginAtZero: true }
             }
@@ -54,12 +76,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// MAPA INTERATIVO (LEAFLET - COIMBRA)
+// MAPA INTERATIVO (LEAFLET)
 let mapInitialized = false;
 function initMap() {
     if (mapInitialized) return;
     
-    // Coordenadas focadas em Coimbra, Portugal
     const lat = 40.2033;
     const lng = -8.4103;
 
@@ -69,7 +90,6 @@ function initMap() {
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Marcador da viatura Pet Táxi
     L.marker([lat, lng]).addTo(map)
         .bindPopup('<b>Pet Táxi Happy Tails</b><br>Viatura a caminho.')
         .openPopup();

@@ -1,18 +1,18 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Tails - Onde a tecnologia encontra o cuidado animal</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Leaflet CSS (Mapas Gratuitos) -->
+    <!-- Leaflet CSS (Mapas) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Chart.js (Gráficos) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <!-- 1. LANDING PAGE / APRESENTAÇÃO -->
+    <!-- 1. LANDING PAGE -->
     <div id="landing-page" class="view-screen active">
         <div class="mobile-card">
             <div class="logo-box">
@@ -25,9 +25,9 @@
                 <p class="subtitle">Marcações, acompanhamento e bem-estar do seu companheiro, tudo num só lugar.</p>
                 
                 <div class="pills-container">
-                    <div class="pill">Tecnologia</div>
-                    <div class="pill">Confiança</div>
-                    <div class="pill">Bem-estar</div>
+                    <div class="pill"><span>01</span><br>Tecnologia</div>
+                    <div class="pill"><span>02</span><br>Confiança</div>
+                    <div class="pill"><span>03</span><br>Bem-estar</div>
                 </div>
 
                 <button class="btn-primary" onclick="showScreen('app-dashboard')">Entrar na Aplicação</button>
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <!-- 2. DASHBOARD DA APP (PAINEL DO TUTOR) -->
+    <!-- 2. DASHBOARD DA APP -->
     <div id="app-dashboard" class="view-screen">
         <header class="app-header">
             <img src="assets/logo.png" alt="Happy Tails Logo" class="header-logo" onclick="showScreen('landing-page')">
@@ -56,26 +56,26 @@
             <!-- TAB: PERFIL -->
             <section id="tab-perfil" class="tab-content active">
                 <h3>Dados do Tutor e do Cão</h3>
-                <form class="form-grid" onsubmit="event.preventDefault();">
+                <form class="form-grid" onsubmit="saveProfile(event)">
                     <div class="form-group">
                         <label>Nome do Tutor</label>
-                        <input type="text" value="Nathana Cantero">
+                        <input type="text" id="tutor-name" placeholder="Escreva o nome do tutor">
                     </div>
                     <div class="form-group">
                         <label>Nome do Cão</label>
-                        <input type="text" value="Max">
+                        <input type="text" id="dog-name" value="Max">
                     </div>
                     <div class="form-group">
                         <label>Raça</label>
-                        <input type="text" value="Golden Retriever">
+                        <input type="text" id="dog-breed" value="Golden Retriever">
                     </div>
                     <div class="form-group">
-                        <label>Idade (anos)</label>
-                        <input type="number" value="3">
+                        <label>Data de Nascimento do Cão</label>
+                        <input type="date" id="dog-birthdate">
                     </div>
                     <div class="form-group">
                         <label>Peso (kg)</label>
-                        <input type="number" value="28.5">
+                        <input type="number" step="0.1" id="dog-weight" value="28.5">
                     </div>
                     <button type="submit" class="btn-primary">Salvar Alterações</button>
                 </form>
@@ -84,10 +84,11 @@
             <!-- TAB: FOTOS -->
             <section id="tab-fotos" class="tab-content">
                 <h3>Galeria do Pet</h3>
+                <p class="hint-text">Clique numa foto para ampliar</p>
                 <div class="photo-grid">
-                    <div class="photo-card"><img src="assets/banho.jpg" alt="Cão"></div>
-                    <div class="photo-card"><img src="assets/socializar.jpg" alt="Cão"></div>
-                    <div class="photo-card"><img src="assets/brincar.jpg" alt="Cão"></div>
+                    <div class="photo-card" onclick="openImageModal(this)"><img src="assets/images/banho.jpg" alt="Cão Max no banho"></div>
+                    <div class="photo-card" onclick="openImageModal(this)"><img src="assets/images/brincar.jpg" alt="Cão Max a brincar"></div>
+                    <div class="photo-card" onclick="openImageModal(this)"><img src="assets/socializar.jpg" alt="Cão Max no passeio"></div>
                 </div>
             </section>
 
@@ -108,7 +109,7 @@
                     <div class="health-card">
                         <h4>Agendamento Veterinário</h4>
                         <p><strong>Próxima consulta:</strong> 25/11/2026 - 14:30</p>
-                        <p><strong>Clínica:</strong> VetCare Coimbra</p>
+                        <p><strong>Clínica:</strong> Happy Tails</p>
                     </div>
                     <div class="health-card">
                         <h4>Registo de Vacinas</h4>
@@ -118,9 +119,12 @@
                         </ul>
                     </div>
                 </div>
-                <div class="chart-box">
+                
+                <div class="chart-box centered-chart">
                     <h4>Consumo Diário de Alimentação (g)</h4>
-                    <canvas id="feedingChart"></canvas>
+                    <div class="canvas-wrapper">
+                        <canvas id="feedingChart"></canvas>
+                    </div>
                 </div>
             </section>
 
@@ -130,7 +134,7 @@
                 <form class="form-grid" onsubmit="handleBooking(event)">
                     <div class="form-group">
                         <label>Tipo de Serviço</label>
-                        <select id="booking-service" onchange="toggleMapInBooking()">
+                        <select id="booking-service">
                             <option value="veterinario">Consulta Veterinária</option>
                             <option value="daycare">Day Care / Creche</option>
                             <option value="pettaxi">Pet Táxi</option>
@@ -169,19 +173,19 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Day Care (Passe Integrado)</td>
+                            <td>Day Care (Passe)</td>
                             <td>01/11/2026</td>
                             <td>120,00 €</td>
                             <td><span class="badge status-paid">Pago</span></td>
                         </tr>
                         <tr>
-                            <td>Pet Táxi (Ida e Volta)</td>
+                            <td>Pet Táxi (Ida/Volta)</td>
                             <td>05/11/2026</td>
                             <td>15,00 €</td>
                             <td><span class="badge status-paid">Pago</span></td>
                         </tr>
                         <tr>
-                            <td>Consulta Veterinária</td>
+                            <td>Consulta Vet</td>
                             <td>25/11/2026</td>
                             <td>45,00 €</td>
                             <td><span class="badge status-pending">Pendente</span></td>
@@ -190,6 +194,12 @@
                 </table>
             </section>
         </main>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO DE FOTO GRANDE -->
+    <div id="image-modal" class="modal" onclick="closeImageModal()">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modal-img">
     </div>
 
     <!-- Leaflet JS (Mapas) -->
