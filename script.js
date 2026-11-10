@@ -1,4 +1,4 @@
-// NAVEGAÇÃO ENTRE ECRÃS PRINCIPAIS
+// NAVEGAÇÃO ENTRE ECRÃS PRINCIPAIS (LANDING PAGE E DASHBOARD)
 function showScreen(screenId) {
     document.querySelectorAll('.view-screen').forEach(screen => {
         screen.classList.remove('active');
@@ -6,7 +6,7 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
-// NAVEGAÇÃO POR ABAS NO DASHBOARD
+// NAVEGAÇÃO POR SEPARADORES/ABAS NO DASHBOARD
 function openTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
@@ -18,20 +18,41 @@ function openTab(tabId) {
     document.getElementById('tab-' + tabId).classList.add('active');
     event.currentTarget.classList.add('active');
 
-    // Inicializa o mapa ao abrir a aba Pet Táxi
+    // Inicializa o mapa do Pet Táxi ao abrir a respetiva aba
     if(tabId === 'pettaxi') {
         setTimeout(initMap, 200);
     }
 }
 
-// SALVAR PERFIL DO TUTOR E DO CÃO
+// SOLICITAR PERMISSÃO DE NOTIFICAÇÃO PUSH (ONESIGNAL OU NATIVA)
+function requestNotificationPermission() {
+    if (window.OneSignalDeferred) {
+        window.OneSignalDeferred.push(function(OneSignal) {
+            OneSignal.Notifications.requestPermission();
+        });
+    } else if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                alert("Notificações ativadas com sucesso!");
+                new Notification("Happy Tails", {
+                    body: "As suas notificações foram ativadas com sucesso!",
+                    icon: "assets/logo.png"
+                });
+            } else if (permission === "denied") {
+                alert("As notificações estão desativadas no seu navegador.");
+            }
+        });
+    }
+}
+
+// GUARDAR DADOS DO PERFIL
 function saveProfile(e) {
     e.preventDefault();
     const tutorName = document.getElementById('tutor-name').value || 'Tutor';
     alert(`Dados salvos com sucesso para ${tutorName}!`);
 }
 
-// MODAL DE VISUALIZAÇÃO DE FOTOS
+// MODAL DE VISUALIZAÇÃO DE FOTOS DA GALERIA
 function openImageModal(element) {
     const imgSrc = element.querySelector('img').src;
     const modal = document.getElementById('image-modal');
@@ -45,14 +66,14 @@ function closeImageModal() {
     document.getElementById('image-modal').style.display = "none";
 }
 
-// ALERTA AO CONFIRMAR AGENDAMENTO
+// CONFIRMAÇÃO DE AGENDAMENTO
 function handleBooking(e) {
     e.preventDefault();
-    alert('Agendamento realizado com sucesso! Pode consultar o estado na aba Notificações.');
+    alert('Agendamento realizado com sucesso! Pode consultar o estado no separador Avisos.');
     openTab('notificacoes');
 }
 
-// GRÁFICO DE ALIMENTAÇÃO CENTRALIZADO
+// GRÁFICO DE ALIMENTAÇÃO (CHART.JS)
 document.addEventListener("DOMContentLoaded", function() {
     const ctx = document.getElementById('feedingChart').getContext('2d');
     new Chart(ctx, {
@@ -76,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// MAPA INTERATIVO (LEAFLET)
+// MAPA INTERATIVO DO PET TÁXI (LEAFLET - COIMBRA)
 let mapInitialized = false;
 function initMap() {
     if (mapInitialized) return;

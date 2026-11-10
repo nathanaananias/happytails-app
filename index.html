@@ -1,4 +1,4 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Chart.js (Gráficos) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- OneSignal Web Push SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "04d880fc-f9bc-46ad-8ddf-16f8f25927e2",
+        });
+      });
+    </script>
 </head>
 <body>
 
@@ -95,6 +106,11 @@
             <!-- TAB: NOTIFICAÇÕES -->
             <section id="tab-notificacoes" class="tab-content">
                 <h3>Notificações & Alertas</h3>
+                
+                <button class="btn-primary push-btn" onclick="requestNotificationPermission()">
+                    🔔 Ativar Notificações Push
+                </button>
+
                 <ul class="notification-list">
                     <li class="notification-item warning">⚠️ Vacina da Raiva a vencer em 15 dias!</li>
                     <li class="notification-item info">🚗 Pet Táxi agendado para amanhã às 08:30.</li>
