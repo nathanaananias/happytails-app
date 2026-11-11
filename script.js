@@ -24,22 +24,39 @@ function openTab(tabId) {
     }
 }
 
-// SOLICITAR PERMISSÃO DE NOTIFICAÇÃO PUSH (ONESIGNAL OU NATIVA)
+// SOLICITAR PERMISSÃO DE NOTIFICAÇÃO PUSH (ONESIGNAL OU NATIVA COM AVISO)
 function requestNotificationPermission() {
+    // 1. Verifica se o navegador suporta notificações
+    if (!("Notification" in window)) {
+        alert("Este navegador ou dispositivo não suporta notificações push.");
+        return;
+    }
+
+    // 2. Verifica se já estão permitidas
+    if (Notification.permission === "granted") {
+        alert("✅ As notificações já estão ativas neste dispositivo!");
+        return;
+    }
+
+    // 3. Verifica se o utilizador bloqueou anteriormente
+    if (Notification.permission === "denied") {
+        alert("⚠️ As notificações estão bloqueadas nas definições do seu navegador.\n\nPara ativar: clique no ícone de cadeado ou definições ao lado do endereço do site (barra superior) e mude 'Notificações' para 'Permitir'.");
+        return;
+    }
+
+    // 4. Se ainda não decidiu ("default"), força o pedido do OneSignal e do Navegador
     if (window.OneSignalDeferred) {
-        window.OneSignalDeferred.push(function(OneSignal) {
-            OneSignal.Notifications.requestPermission();
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            await OneSignal.Slidedown.promptPush();
         });
-    } else if ("Notification" in window) {
+    } else {
         Notification.requestPermission().then(permission => {
             if (permission === "granted") {
-                alert("Notificações ativadas com sucesso!");
+                alert("✅ Notificações ativadas com sucesso!");
                 new Notification("Happy Tails", {
                     body: "As suas notificações foram ativadas com sucesso!",
                     icon: "assets/logo.png"
                 });
-            } else if (permission === "denied") {
-                alert("As notificações estão desativadas no seu navegador.");
             }
         });
     }
